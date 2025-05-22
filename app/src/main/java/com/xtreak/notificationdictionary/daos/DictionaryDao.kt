@@ -10,7 +10,9 @@
 
 package com.xtreak.notificationdictionary
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
 
 @Dao
 interface DictionaryDao {

@@ -22,7 +22,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import java.util.Locale
 
 
 class RoomAdapter(data: List<Word>, context: Context) :

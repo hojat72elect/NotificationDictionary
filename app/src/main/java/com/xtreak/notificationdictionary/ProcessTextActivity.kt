@@ -93,7 +93,7 @@ open class ProcessIntentActivity : AppCompatActivity() {
             lexicalCategory = meaning?.lexicalCategory ?: ""
 
             if (meaning?.definition != null) {
-                definition = "${lexicalCategory}, ${meaning?.definition}"
+                definition = "${lexicalCategory}, ${meaning.definition}"
             } else {
                 definition = "No meaning found"
             }

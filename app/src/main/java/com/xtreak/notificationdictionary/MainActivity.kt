@@ -273,7 +273,8 @@ class MainActivity : AppCompatActivity() {
                         .setMessage(getString(R.string.change_confirmation))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes,
+                        .setPositiveButton(
+                            android.R.string.yes,
                             DialogInterface.OnClickListener { dialog, whichButton ->
 
                                 val sharedPref = applicationContext.getSharedPreferences(
@@ -320,7 +321,8 @@ class MainActivity : AppCompatActivity() {
                                 previous = spinner.selectedItemPosition
                             }
                         )
-                        .setNegativeButton(android.R.string.no,
+                        .setNegativeButton(
+                            android.R.string.no,
                             DialogInterface.OnClickListener { dialog, whichButton ->
                                 spinner.setSelection(previous, false)
                                 show_dialog = false

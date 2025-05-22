@@ -10,7 +10,9 @@
 
 package com.xtreak.notificationdictionary
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
 
 @Dao
 interface HistoryDao {
@@ -44,8 +46,9 @@ interface HistoryDao {
     @Query("SELECT * from history where is_favourite = 1")
     fun getFavouriteEntries(): List<History>
 
-    class WordWithMeaning(var isFavourite: Int? = 0, var word: String? = "",
-                          var definition: String? = ""
+    class WordWithMeaning(
+        var isFavourite: Int? = 0, var word: String? = "",
+        var definition: String? = ""
     ) {
         var lastAccessedAt: Int? = 0
         var lexicalCategory: String? = ""

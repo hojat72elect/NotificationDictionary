@@ -39,4 +39,4 @@ data class History(
     @ColumnInfo(name = "word") val word: String?,
     @ColumnInfo(name = "is_favourite") var isFavourite: Int = 0,
     @ColumnInfo(name = "last_accessed_at") val lastAccessedAt: Long?
-    )
+)

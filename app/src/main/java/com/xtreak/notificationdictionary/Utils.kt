@@ -10,9 +10,7 @@
 
 package com.xtreak.notificationdictionary
 
-import android.util.Log
-import java.lang.Exception
-import java.util.*
+import java.util.Locale
 
 /**
  * Enrich meanings with the original word meaning in case of plural and different tense
@@ -22,19 +20,21 @@ fun resolveRedirectMeaning(
     meanings: List<Word>,
     dao: DictionaryDao
 ) {
-    val redirectRegex = """(singular form|plural|present participle|past participle) of (\w+)""".toRegex(RegexOption.IGNORE_CASE)
+    val redirectRegex =
+        """(singular form|plural|present participle|past participle) of (\w+)""".toRegex(RegexOption.IGNORE_CASE)
 
     for (meaning in meanings) {
         var definition = meaning.definition
         redirectRegex.find(definition.toString())?.let {
             val (_, singularWord) = it.destructured
-            dao.getMeaningsByWord(singularWord.toString().trim().lowercase(Locale.getDefault()), 1)?.let {
-                val singularDefinition = it.definition!!
-                meaning.definition = meaning.definition?.replace(
-                    singularWord,
-                    "$singularWord ($singularDefinition)"
-                )
-            }
+            dao.getMeaningsByWord(singularWord.toString().trim().lowercase(Locale.getDefault()), 1)
+                ?.let {
+                    val singularDefinition = it.definition!!
+                    meaning.definition = meaning.definition?.replace(
+                        singularWord,
+                        "$singularWord ($singularDefinition)"
+                    )
+                }
         }
     }
 }
@@ -69,7 +69,7 @@ fun addHistoryEntry(
 
 // If the last or first letter is a punctuation then remove it.
 fun removePunctuation(word: String): String {
-    var word = word;
+    var word = word
 
     if (!word.last().isLetter()) {
         word = word.substring(0, word.length - 1)
