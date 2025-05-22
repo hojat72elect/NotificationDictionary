@@ -15,7 +15,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
@@ -51,7 +50,6 @@ import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
-import de.cketti.library.changelog.ChangeLog
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
@@ -210,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         val wordEdit = findViewById<EditText>(R.id.wordInput)
         wordEdit.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                sendMessage(v)
+                sendMessage()
                 return@OnEditorActionListener true
             }
             false
@@ -274,59 +272,58 @@ class MainActivity : AppCompatActivity() {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setCancelable(false)
                         .setPositiveButton(
-                            android.R.string.yes,
-                            DialogInterface.OnClickListener { dialog, whichButton ->
+                            android.R.string.yes
+                        ) { _, _ ->
 
-                                val sharedPref = applicationContext.getSharedPreferences(
-                                    getString(R.string.preference_file_key), Context.MODE_PRIVATE
-                                )
-                                val default_database_key = getString(R.string.default_database)
-                                val selected_language_key = getString(R.string.selected_language)
+                            val sharedPref = applicationContext.getSharedPreferences(
+                                getString(R.string.preference_file_key), Context.MODE_PRIVATE
+                            )
+                            val default_database_key = getString(R.string.default_database)
+                            val selected_language_key = getString(R.string.selected_language)
 
-                                var database_name = "database_en.db"
-                                var selected_language = "en"
+                            var database_name = "database_en.db"
+                            var selected_language = "en"
 
-                                // TODO: Need to organize mapping somewhere. This is not scalable on introducing new languages.
-                                if (item == "English") {
-                                    database_name = "dictionary.db"
-                                    selected_language = "en"
-                                    setLocale("en")
-                                } else if (item == "French") {
-                                    database_name = "dictionary_fr.db"
-                                    selected_language = "fr"
-                                    setLocale("fr")
-                                } else if (item == "German") {
-                                    database_name = "dictionary_de.db"
-                                    selected_language = "de"
-                                } else if (item == "Polish") {
-                                    database_name = "dictionary_pl.db"
-                                    selected_language = "pl"
-                                }
-
-                                with(sharedPref.edit()) {
-                                    putString(default_database_key, database_name)
-                                    putString(selected_language_key, selected_language)
-                                    apply()
-                                    commit()
-                                }
-
-                                // As soon as the preference is changed if the file doesn't exist then download
-                                val package_data_directory =
-                                    Environment.getDataDirectory().absolutePath + "/data/" + packageName
-                                val file = File("$package_data_directory/databases/$database_name")
-
-                                if (!file.exists()) {
-                                    initialize_database(database_name)
-                                }
-                                previous = spinner.selectedItemPosition
+                            // TODO: Need to organize mapping somewhere. This is not scalable on introducing new languages.
+                            if (item == "English") {
+                                database_name = "dictionary.db"
+                                selected_language = "en"
+                                setLocale("en")
+                            } else if (item == "French") {
+                                database_name = "dictionary_fr.db"
+                                selected_language = "fr"
+                                setLocale("fr")
+                            } else if (item == "German") {
+                                database_name = "dictionary_de.db"
+                                selected_language = "de"
+                            } else if (item == "Polish") {
+                                database_name = "dictionary_pl.db"
+                                selected_language = "pl"
                             }
-                        )
+
+                            with(sharedPref.edit()) {
+                                putString(default_database_key, database_name)
+                                putString(selected_language_key, selected_language)
+                                apply()
+                                commit()
+                            }
+
+                            // As soon as the preference is changed if the file doesn't exist then download
+                            val package_data_directory =
+                                Environment.getDataDirectory().absolutePath + "/data/" + packageName
+                            val file = File("$package_data_directory/databases/$database_name")
+
+                            if (!file.exists()) {
+                                initialize_database(database_name)
+                            }
+                            previous = spinner.selectedItemPosition
+                        }
                         .setNegativeButton(
-                            android.R.string.no,
-                            DialogInterface.OnClickListener { dialog, whichButton ->
-                                spinner.setSelection(previous, false)
-                                show_dialog = false
-                            }).show()
+                            android.R.string.no
+                        ) { _, _ ->
+                            spinner.setSelection(previous, false)
+                            show_dialog = false
+                        }.show()
                 } else {
                     show_dialog = true
                 }
@@ -349,18 +346,9 @@ class MainActivity : AppCompatActivity() {
         // Setting locale changes the values only on startup. We need to call
         // recreate() but it can end in a loop as we do it in app startup.
         // Call these manually to refresh but this needs a fix.
-        val wordEdit = findViewById<EditText>(R.id.wordInput)
         val searchButton = findViewById<TextView>(R.id.searchButton)
-        val word: String? = intent?.extras?.getString("NotificationWord")
 
         searchButton.text = getString(R.string.search)
-    }
-
-    fun show_changelog() {
-        val changelog = ChangeLog(this)
-        if (changelog.isFirstRun) {
-            changelog.logDialog.show()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -458,7 +446,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val fetch = getInstance(fetchConfiguration)
-        val request: Request = Request(url, zip_path)
+        val request = Request(url, zip_path)
         request.priority = Priority.HIGH
         request.networkType = NetworkType.ALL
         progressDialog.progress = 0
@@ -575,7 +563,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun sendMessage(view: View) {
+    fun sendMessage() {
         val wordEdit = findViewById<EditText>(R.id.wordInput)
 
         // https://stackoverflow.com/questions/18414804/android-edittext-remove-focus-after-clicking-a-button

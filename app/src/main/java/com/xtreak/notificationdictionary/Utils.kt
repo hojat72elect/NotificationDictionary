@@ -24,10 +24,10 @@ fun resolveRedirectMeaning(
         """(singular form|plural|present participle|past participle) of (\w+)""".toRegex(RegexOption.IGNORE_CASE)
 
     for (meaning in meanings) {
-        var definition = meaning.definition
+        val definition = meaning.definition
         redirectRegex.find(definition.toString())?.let {
             val (_, singularWord) = it.destructured
-            dao.getMeaningsByWord(singularWord.toString().trim().lowercase(Locale.getDefault()), 1)
+            dao.getMeaningsByWord(singularWord.trim().lowercase(Locale.getDefault()), 1)
                 ?.let {
                     val singularDefinition = it.definition!!
                     meaning.definition = meaning.definition?.replace(
@@ -62,7 +62,7 @@ fun addHistoryEntry(
                 )
             )
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
     }
 
 }

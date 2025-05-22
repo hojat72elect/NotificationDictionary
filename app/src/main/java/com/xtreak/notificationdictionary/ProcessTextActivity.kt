@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -51,22 +52,23 @@ open class ProcessIntentActivity : AppCompatActivity() {
     private val NOTIFICATION_TIMEOUT = 20000
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         var word: String
-        var lexicalCategory: String = ""
+        var lexicalCategory: String
         val context = applicationContext
         val executor = Executors.newSingleThreadExecutor()
         var definition = "No meaning found"
 
-        if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
-            word = intent.getCharSequenceExtra(Intent.EXTRA_TEXT).toString().lowercase()
+        word = if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            intent.getCharSequenceExtra(Intent.EXTRA_TEXT).toString().lowercase()
         } else {
-            word = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString().lowercase()
+            intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString().lowercase()
         }
 
-        word = removePunctuation(word).toString()
+        word = removePunctuation(word)
 
 
         // https://stackoverflow.com/questions/1250643/how-to-wait-for-all-threads-to-finish-using-executorservice
@@ -163,6 +165,7 @@ open class ProcessIntentActivity : AppCompatActivity() {
         this.finish()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addShareButton(
         word: String,
         definition: String,
@@ -209,6 +212,7 @@ open class ProcessIntentActivity : AppCompatActivity() {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addReadButton(
         word: String,
         definition: String,
@@ -243,6 +247,7 @@ open class ProcessIntentActivity : AppCompatActivity() {
         builder.addAction(NotificationCompat.Action(null, "Read", nRead))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addFavouriteButton(
         word: String,
         context: Context,
@@ -261,7 +266,7 @@ open class ProcessIntentActivity : AppCompatActivity() {
                         historyDao.addFavourite(word)
                     }
                     context.unregisterReceiver(this)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 } finally {
                     executor.shutdown()
                 }
